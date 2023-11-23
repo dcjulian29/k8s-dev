@@ -1,0 +1,87 @@
+---
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+    ldflags:
+      - -s -w
+      - -X go.szostok.io/version.version={{.Version}}
+      - -X go.szostok.io/version.buildDate={{.Date}}
+archives:
+  - files:
+      - LICENSE
+    builds_info:
+      group: root
+      owner: root
+      mode: 0755
+    name_template: "dcjulian29.apps.k8s-dev_{{ .Version }}_{{ .Os }}"
+    format_overrides:
+      - format: zip
+        goos: windows
+nfpms:
+  - package_name: dcjulian29.apps.k8s-dev
+    homepage: https://github.com/dcjulian29/k8s-dev/
+    maintainer: Julian Easterling <julian@julianscorner.com>
+    license: Apache 2.0
+    dependencies:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - virtualbox
+      - vagrant
+    description: |-
+      k8s-dev integrates with Vagrant to enable users to define, develop, and test Ansible
+      playbooks, roles, and modules. It allows users to define and manage infrastructure resources and
+      uses the providers automation engine to provision and run plays.
+
+      By utilizing Ansible's playbooks, roles, and modules, developers can automate the deployment of
+      software applications across multiple hosting providers, reducing the time and effort required to
+      manage complex infrastructure environments. These playbooks, roles, and modules enable developers to
+      create, manage, and provision infrastructure resources like virtual machines, load balancers, and
+      databases.
+    formats:
+      - deb
+      - rpm
+    bindir: /usr/local/bin
+chocolateys:
+  - name: dcjulian29.apps.k8s-dev
+    authors: Julian Easterling <julian@julianscorner.com>
+    project_url: https://github.com/dcjulian29/k8s-dev/
+    copyright: 2023 Julian Easterling julian@julianscorner.com
+    license_url: https://github.com/dcjulian29/k8s-dev/blob/main/LICENSE
+    require_license_acceptance: false
+    bug_tracker_url: https://github.com/dcjulian29/k8s-dev/issues
+    description: |
+      k8s-dev integrates with Vagrant to enable users to define, develop, and test Ansible
+      playbooks, roles, and modules. It allows users to define and manage infrastructure resources and
+      uses the providers automation engine to provision and run plays.
+
+      By utilizing Ansible's playbooks, roles, and modules, developers can automate the deployment of
+      software applications across multiple hosting providers, reducing the time and effort required to
+      manage complex infrastructure environments. These playbooks, roles, and modules enable developers to
+      create, manage, and provision infrastructure resources like virtual machines, load balancers, and
+      databases.
+    dependencies:
+      - id: docker-desktop
+      - id: vagrant
+    api_key: "{{ .Env.CHOCO_API_KEY}}"
+    source_repo: "https://www.myget.org/F/dcjulian29-chocolatey/"
+    skip_publish: false
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'

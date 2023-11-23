@@ -1,0 +1,15 @@
+.vagrant/
+collections/
+dist/
+playbooks/
+roles/
+
+.ansible-lint
+.kubectl.cfg
+ansible.cfg
+ansible.log
+desktop.ini
+hosts.ini
+k8s-dev.exe
+k8s-dev
+Vagrantfile
