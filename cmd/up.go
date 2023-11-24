@@ -26,7 +26,8 @@ var upCmd = &cobra.Command{
 	Short: "Bring the Kubernetes development vagrant environment online",
 	Long:  "Bring the Kubernetes development vagrant environment online",
 	Run: func(cmd *cobra.Command, args []string) {
-		vagrantUp(strings.Join(args, " "), boolFlag)
+		provision, _ := cmd.Flags().GetBool("provision")
+		vagrantUp(strings.Join(args, " "), provision)
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
@@ -36,5 +37,5 @@ var upCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(upCmd)
 
-	upCmd.Flags().BoolVarP(&boolFlag, "provision", "p", true, "run the vagrant provisioner")
+	upCmd.Flags().BoolP("provision", "p", true, "run the vagrant provisioner")
 }

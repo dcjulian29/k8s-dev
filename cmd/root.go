@@ -24,7 +24,6 @@ import (
 
 var (
 	folderPath       string
-	boolFlag         bool
 	workingDirectory string
 )
 
