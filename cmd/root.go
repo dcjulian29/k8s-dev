@@ -16,7 +16,6 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -50,25 +49,6 @@ func Execute() {
 	cobra.CheckErr(err)
 }
 
-func dirExists(path string) bool {
-	info, err := os.Stat(path)
-	if os.IsNotExist(err) {
-		return false
-	}
-
-	return info.IsDir()
-}
-
-func ensureDir(dirPath string) error {
-	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
-		if err := os.MkdirAll(dirPath, 0755); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 func init() {
 	pwd, _ := os.Getwd()
 
@@ -80,21 +60,4 @@ func ensureRootDirectory() {
 		err := os.Chdir(folderPath)
 		cobra.CheckErr(err)
 	}
-}
-
-func fileExists(filename string) bool {
-	info, err := os.Stat(filename)
-	if os.IsNotExist(err) {
-		return false
-	}
-
-	return !info.IsDir()
-}
-
-func printMessage(msg string) {
-	fmt.Printf("\033[1;33m%s\033[0m\n", msg)
-}
-
-func printSubMessage(msg string) {
-	fmt.Printf("\033[1;33m ...  %s\033[0m\n", msg)
 }
