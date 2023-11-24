@@ -26,7 +26,8 @@ var haltCmd = &cobra.Command{
 	Short: "Halt the Kubernetes development vagrant environment",
 	Long:  "Halt the Kubernetes development vagrant environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		vagrantHalt(strings.Join(args, " "), boolFlag)
+		force, _ := cmd.Flags().GetBool("force")
+		vagrantHalt(strings.Join(args, " "), force)
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
@@ -36,5 +37,5 @@ var haltCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(haltCmd)
 
-	haltCmd.Flags().BoolVarP(&boolFlag, "force", "f", false, "force the shut down of the cluster node(s)")
+	haltCmd.Flags().BoolP("force", "f", false, "force the shut down of the cluster node(s)")
 }

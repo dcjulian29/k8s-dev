@@ -50,6 +50,10 @@ func vagrantHalt(name string, force bool) error {
 		fmt.Println(Info("Halting all vagrant machines..."))
 	}
 
+	if force {
+		param = append(param, "--force")
+	}
+
 	return executeExternalProgram("vagrant", param...)
 }
 
