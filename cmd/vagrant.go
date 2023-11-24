@@ -17,6 +17,26 @@ package cmd
 
 import "fmt"
 
+func vagrantDestroy(name string, force bool) error {
+	param := []string{
+		"destroy",
+	}
+
+	if len(name) > 0 {
+		fmt.Println(Info(fmt.Sprintf("Destroying '%s' machine...", name)))
+
+		param = append(param, name)
+	} else {
+		fmt.Println(Info("Destroying all vagrant machines..."))
+	}
+
+	if force {
+		param = append(param, "--force")
+	}
+
+	return executeExternalProgram("vagrant", param...)
+}
+
 func vagrantHalt(name string, force bool) error {
 	param := []string{
 		"halt",
