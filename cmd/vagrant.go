@@ -32,3 +32,23 @@ func vagrantHalt(name string, force bool) error {
 
 	return executeExternalProgram("vagrant", param...)
 }
+
+func vagrantUp(name string, provision bool) error {
+	param := []string{
+		"up",
+	}
+
+	if len(name) > 0 {
+		fmt.Println(Info(fmt.Sprintf("Bringing '%s' online...", name)))
+
+		param = append(param, name)
+	} else {
+		fmt.Println(Info("Bringing all vagrant machines online..."))
+	}
+
+	if provision {
+		param = append(param, "--provision")
+	}
+
+	return executeExternalProgram("vagrant", param...)
+}

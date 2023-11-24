@@ -21,12 +21,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var haltCmd = &cobra.Command{
-	Use:   "halt [node]",
-	Short: "Halt the Kubernetes development vagrant environment",
-	Long:  "Halt the Kubernetes development vagrant environment",
+var upCmd = &cobra.Command{
+	Use:   "up [node]",
+	Short: "Bring the Kubernetes development vagrant environment online",
+	Long:  "Bring the Kubernetes development vagrant environment online",
 	Run: func(cmd *cobra.Command, args []string) {
-		vagrantHalt(strings.Join(args, " "), boolFlag)
+		vagrantUp(strings.Join(args, " "), boolFlag)
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
@@ -34,7 +34,7 @@ var haltCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(haltCmd)
+	rootCmd.AddCommand(upCmd)
 
-	haltCmd.Flags().BoolVarP(&boolFlag, "force", "f", false, "force the shut down of the cluster node(s)")
+	upCmd.Flags().BoolVarP(&boolFlag, "provision", "p", true, "run the vagrant provisioner")
 }
