@@ -7,6 +7,9 @@ on:
       - 'go.mod'
       - 'go.sum'
 
+    tags-ignore:
+      - '**'
+
   pull_request:
     paths:
       - '**.go'
@@ -17,7 +20,6 @@ on:
 
 jobs:
   build:
-    if: ! contains(github.ref, 'tags/')
     runs-on: windows-2022
 
     steps:
