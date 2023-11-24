@@ -17,7 +17,7 @@ on:
 
 jobs:
   build:
-    if: !contains(github.ref, 'tags/')
+    if: ! contains(github.ref, 'tags/')
     runs-on: windows-2022
 
     steps:
