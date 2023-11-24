@@ -23,10 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	force bool
-)
-
 var initCmd = &cobra.Command{
 	Use:     "init",
 	Aliases: []string{"initialize", "create"},
@@ -100,7 +96,7 @@ func init() {
 	initCmd.Flags().IntP("servers", "s", 2, "number of control servers")
 	initCmd.Flags().StringP("box", "b", "debian/bookworm64", "vagrant box image")
 
-	initCmd.Flags().BoolVarP(&force, "force", "f", false, "overwrite an existing development environment")
+	initCmd.Flags().BoolVarP(&forceFlag, "force", "f", false, "overwrite an existing development environment")
 }
 
 func initialize(cmd *cobra.Command, args []string) {
@@ -117,8 +113,8 @@ func initialize(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
 	}
 
-	if fileExists("ansible.cfg") && !force {
-		cobra.CheckErr(fmt.Errorf("The folder for the development environment already contains an environment and force was not provided."))
+	if fileExists("ansible.cfg") && !forceFlag {
+		cobra.CheckErr(fmt.Errorf("The folder for the development environment already contains an environment and forceFlag was not provided."))
 	}
 
 	makeDirectory("collections")
