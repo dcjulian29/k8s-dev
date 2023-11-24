@@ -1,6 +1,7 @@
 .vagrant/
 collections/
 dist/
+group_vars/
 playbooks/
 roles/
 
