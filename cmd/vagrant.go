@@ -17,7 +17,19 @@ package cmd
 
 import "fmt"
 
+func ensureVagrantfile() error {
+	if !fileExists("Vagrantfile") {
+		return fmt.Errorf("can't find the Vagrantfile")
+	}
+
+	return nil
+}
+
 func vagrantDestroy(name string, force bool) error {
+	if err := ensureVagrantfile(); err != nil {
+		return err
+	}
+
 	param := []string{
 		"destroy",
 	}
@@ -38,6 +50,10 @@ func vagrantDestroy(name string, force bool) error {
 }
 
 func vagrantHalt(name string, force bool) error {
+	if err := ensureVagrantfile(); err != nil {
+		return err
+	}
+
 	param := []string{
 		"halt",
 	}
@@ -58,6 +74,10 @@ func vagrantHalt(name string, force bool) error {
 }
 
 func vagrantUp(name string, provision bool) error {
+	if err := ensureVagrantfile(); err != nil {
+		return err
+	}
+
 	param := []string{
 		"up",
 	}
