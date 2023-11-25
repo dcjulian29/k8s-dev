@@ -15,7 +15,9 @@ limitations under the License.
 */
 package cmd
 
-import "os"
+import (
+	"os"
+)
 
 func dirExists(path string) bool {
 	info, err := os.Stat(path)
@@ -43,4 +45,12 @@ func fileExists(filename string) bool {
 	}
 
 	return !info.IsDir()
+}
+
+func removeFile(filePath string) error {
+	if fileExists(filePath) {
+		return os.Remove(filePath)
+	}
+
+	return nil
 }

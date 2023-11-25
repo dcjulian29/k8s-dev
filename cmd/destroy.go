@@ -28,6 +28,7 @@ var destroyCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		force, _ := cmd.Flags().GetBool("force")
 		vagrantDestroy(strings.Join(args, " "), force)
+		removeFile(".kubectl.cfg")
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
