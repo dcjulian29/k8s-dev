@@ -21,10 +21,29 @@ import (
 )
 
 func executeExternalProgram(program string, params ...string) error {
+	return executeExternalProgramEnv(program, []string{""}, params...)
+}
+
+func executeExternalProgramEnv(program string, env []string, params ...string) error {
 	cmd := exec.Command(program, params...)
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
+	cmd.Env = append(os.Environ(), env...)
 
 	return cmd.Run()
+}
+
+func executeCommand(program string, params ...string) (string, error) {
+	return executeCommandEnv(program, []string{""}, params...)
+}
+
+func executeCommandEnv(program string, env []string, params ...string) (string, error) {
+	cmd := exec.Command(program, params...)
+	cmd.Stdin = os.Stdin
+	cmd.Env = append(os.Environ(), env...)
+
+	output, err := cmd.CombinedOutput()
+
+	return string(output[:]), err
 }
