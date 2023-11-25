@@ -26,8 +26,8 @@ import (
 var initCmd = &cobra.Command{
 	Use:     "init",
 	Aliases: []string{"initialize", "create"},
-	Short:   "Initialize an development vagrant environment for use with Kubernetes development",
-	Long:    "Initialize an development vagrant environment for use with Kubernetes development",
+	Short:   "Initialize the Kubernetes development vagrant environment",
+	Long:    "Initialize the Kubernetes development vagrant environment",
 	Run:     initialize,
 }
 
