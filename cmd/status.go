@@ -24,6 +24,7 @@ var statusCmd = &cobra.Command{
 	Short: "Output machine status of the Kubernetes development environment",
 	Long:  "Output machine status of the Kubernetes development environment",
 	Run: func(cmd *cobra.Command, args []string) {
+		cobra.CheckErr(ensureVagrantfile())
 		executeExternalProgram("vagrant", "status")
 	},
 }
