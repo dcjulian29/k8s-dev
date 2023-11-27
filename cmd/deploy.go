@@ -34,7 +34,7 @@ var deployCmd = &cobra.Command{
 		if nodes {
 			output, err := executeCommand("kubectl", "--kubeconfig=./.kubectl.cfg", "get", "nodes")
 
-			fmt.Println(Teal("==> Cluster Nodes"))
+			printSubMessage("Cluster Nodes")
 			fmt.Printf(output)
 
 			cobra.CheckErr(err)
@@ -43,7 +43,7 @@ var deployCmd = &cobra.Command{
 		if pods {
 			output, err := executeCommand("kubectl", "--kubeconfig=.kubectl.cfg", "get", "pods", "--all-namespaces")
 
-			fmt.Println(Teal("==> Cluster Pods"))
+			printSubMessage("Cluster Pods")
 			fmt.Printf(output)
 
 			cobra.CheckErr(err)

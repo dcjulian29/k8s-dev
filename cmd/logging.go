@@ -41,9 +41,9 @@ func Color(colorString string) func(...interface{}) string {
 }
 
 func printMessage(msg string) {
-	fmt.Printf(Yellow(fmt.Sprintf("%s\n", msg)))
+	fmt.Println(Yellow(msg))
 }
 
 func printSubMessage(msg string) {
-	fmt.Printf(Yellow(fmt.Sprintf(" ...  %s\n", msg)))
+	fmt.Println(Teal(fmt.Sprintf("==> %s", msg)))
 }
