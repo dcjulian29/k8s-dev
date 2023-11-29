@@ -35,7 +35,7 @@ var resetCmd = &cobra.Command{
 			output, err := executeCommand("kubectl", "--kubeconfig=./.kubectl.cfg", "get", "nodes")
 
 			printSubMessage("Cluster Nodes")
-			fmt.Printf(output)
+			fmt.Println(output)
 
 			cobra.CheckErr(err)
 		}
@@ -44,7 +44,7 @@ var resetCmd = &cobra.Command{
 			output, err := executeCommand("kubectl", "--kubeconfig=.kubectl.cfg", "get", "pods", "--all-namespaces")
 
 			printSubMessage("Cluster Pods")
-			fmt.Printf(output)
+			fmt.Println(output)
 
 			cobra.CheckErr(err)
 		}

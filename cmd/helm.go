@@ -21,16 +21,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var controlCmd = &cobra.Command{
-	Use:                "control",
-	Short:              "Control the Kubernetes development vagrant environment",
-	Long:               "Control the Kubernetes development vagrant environment",
-	Aliases:            []string{"kubectl", "ctl"},
-	DisableFlagParsing: true,
+var helmCmd = &cobra.Command{
+	Use:   "helm",
+	Short: "Use helm in the Kubernetes development vagrant environment",
+	Long:  "Use helm in the Kubernetes development vagrant environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		params := append(args, "--kubeconfig=./.kubectl.cfg")
+		params := append(args, "--kubeconfig=./.kubectl.cfg", "--kube-context=default")
 
-		output, _ := executeCommand("kubectl", params...)
+		output, _ := executeCommand("helm", params...)
 
 		fmt.Println(output)
 	},
@@ -40,5 +38,5 @@ var controlCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(controlCmd)
+	rootCmd.AddCommand(helmCmd)
 }
