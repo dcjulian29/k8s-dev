@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -26,7 +27,15 @@ var resetCmd = &cobra.Command{
 	Short: "Reset the Kubernetes development vagrant environment",
 	Long:  "Reset the Kubernetes development vagrant environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		executeExternalProgram("ansible-playbook", "playbooks/reset.yml")
+		recreate, _ := cmd.Flags().GetBool("recreate")
+
+		if recreate {
+			vagrantDestroy(strings.Join(args, " "), true)
+			vagrantUp(strings.Join(args, " "), true)
+			executeExternalProgram("ansible-playbook", "playbooks/deploy.yml")
+		} else {
+			executeExternalProgram("ansible-playbook", "playbooks/reset.yml")
+		}
 
 		nodes, _ := cmd.Flags().GetBool("nodes")
 		pods, _ := cmd.Flags().GetBool("pods")
@@ -56,4 +65,5 @@ func init() {
 
 	resetCmd.Flags().BoolP("nodes", "n", true, "Show nodes of deployed cluster")
 	resetCmd.Flags().BoolP("pods", "p", false, "Show pods of deployed cluster")
+	resetCmd.Flags().Bool("recreate", false, "Recreate the vagrant hosts")
 }
