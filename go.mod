@@ -2,7 +2,7 @@ module github.com/dcjulian29/k8s-dev
 
 go 1.21.4
 
-require github.com/spf13/cobra v1.8.0
+require github.com/spf13/cobra v1.8.1
 
 require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
