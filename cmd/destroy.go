@@ -27,6 +27,10 @@ var destroyCmd = &cobra.Command{
 	Long:  "Destroy the Kubernetes development vagrant environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		force, _ := cmd.Flags().GetBool("force")
+		if !force {
+			force = askForConfirmation("Are you sure you want to destroy the cluster?")
+		}
+
 		vagrantDestroy(strings.Join(args, " "), force)
 		removeFile(".kubectl.cfg")
 	},
