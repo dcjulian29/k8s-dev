@@ -1,15 +1,21 @@
 {
   "cSpell.words": [
+    "CHOCO",
+    "chocolateys",
     "cpus",
     "dcjulian",
+    "goarch",
     "iface",
     "ioapic",
+    "ldflags",
     "modifyvm",
+    "nfpms",
     "nicpromisc",
     "servicelb",
     "szostok",
     "traefik",
     "uartmode",
+    "virtctl",
     "vmsvga"
   ]
 }
