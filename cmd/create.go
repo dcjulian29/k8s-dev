@@ -21,13 +21,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var upCmd = &cobra.Command{
-	Use:   "up [node]",
-	Short: "Bring the Kubernetes development vagrant environment online",
-	Long:  "Bring the Kubernetes development vagrant environment online",
+var createCmd = &cobra.Command{
+	Use:     "create [node]",
+	Aliases: []string{"up"},
+	Short:   "Create the Kubernetes development Vagrant environment",
+	Long:    "Create the Kubernetes development Vagrant environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		provision, _ := cmd.Flags().GetBool("provision")
 		vagrantUp(strings.Join(args, " "), provision)
+
+		deploy, _ := cmd.Flags().GetBool("deploy")
+
+		if deploy {
+			deployCmd.Run(cmd, args)
+		}
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
@@ -35,7 +42,8 @@ var upCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(upCmd)
+	rootCmd.AddCommand(createCmd)
 
-	upCmd.Flags().BoolP("provision", "p", true, "run the vagrant provisioner")
+	createCmd.Flags().BoolP("provision", "p", true, "run the Vagrant provisioner")
+	createCmd.Flags().BoolP("deploy", "d", false, "deploy the Kubernetes cluster")
 }

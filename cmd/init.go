@@ -21,9 +21,9 @@ import (
 
 var initCmd = &cobra.Command{
 	Use:     "init",
-	Aliases: []string{"initialize", "create"},
-	Short:   "Initialize the Kubernetes development vagrant environment",
-	Long:    "Initialize the Kubernetes development vagrant environment",
+	Aliases: []string{"initialize"},
+	Short:   "Initialize the Kubernetes development vagrant environment files",
+	Long:    "Initialize the Kubernetes development vagrant environment files",
 	Run: func(cmd *cobra.Command, args []string) {
 		if workingDirectory != folderPath {
 			cobra.CheckErr(createFolder(folderPath))
