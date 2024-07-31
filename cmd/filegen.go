@@ -86,8 +86,8 @@ func createFile(filePath string, content []byte) error {
 	return nil
 }
 
-func deploy_yml() error {
-	return createFile("playbooks/deploy.yml", []byte(`---
+func init_yml() error {
+	return createFile("playbooks/init.yml", []byte(`---
 - name: Initialize node
   hosts: k3s_cluster
   become: true

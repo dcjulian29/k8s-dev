@@ -26,7 +26,7 @@ var deployCmd = &cobra.Command{
 	Short: "Deploy the Kubernetes development vagrant environment",
 	Long:  "Deploy the Kubernetes development vagrant environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		executeExternalProgram("ansible-playbook", "playbooks/deploy.yml")
+		executeExternalProgram("ansible-playbook", "playbooks/init.yml")
 
 		nodes, _ := cmd.Flags().GetBool("nodes")
 		pods, _ := cmd.Flags().GetBool("pods")

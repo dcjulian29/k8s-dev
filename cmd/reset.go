@@ -32,7 +32,7 @@ var resetCmd = &cobra.Command{
 		if recreate {
 			vagrantDestroy(strings.Join(args, " "), true)
 			vagrantUp(strings.Join(args, " "), true)
-			executeExternalProgram("ansible-playbook", "playbooks/deploy.yml")
+			executeExternalProgram("ansible-playbook", "playbooks/init.yml")
 		} else {
 			executeExternalProgram("ansible-playbook", "playbooks/reset.yml")
 		}
