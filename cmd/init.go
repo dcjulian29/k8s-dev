@@ -55,7 +55,7 @@ var initCmd = &cobra.Command{
 		cobra.CheckErr(all_yml())
 		cobra.CheckErr(k3s_cluster_yml())
 
-		cobra.CheckErr(deploy_yml())
+		cobra.CheckErr(init_yml())
 		cobra.CheckErr(reboot_yml())
 		cobra.CheckErr(reset_yml())
 
