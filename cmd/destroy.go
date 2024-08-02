@@ -22,9 +22,10 @@ import (
 )
 
 var destroyCmd = &cobra.Command{
-	Use:   "destroy [node]",
-	Short: "Destroy the Kubernetes development vagrant environment",
-	Long:  "Destroy the Kubernetes development vagrant environment",
+	Use:     "destroy [node]",
+	Aliases: []string{"down"},
+	Short:   "Destroy the Kubernetes development vagrant environment",
+	Long:    "Destroy the Kubernetes development vagrant environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		force, _ := cmd.Flags().GetBool("force")
 		if !force {
