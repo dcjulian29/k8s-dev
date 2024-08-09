@@ -52,7 +52,7 @@ var testCmd = &cobra.Command{
 
 		defer file.Close()
 
-		content := "---\n- hosts: 127.0.0.1\n  any_errors_fatal: true\n  gather_facts: false\n\n  vars:\n    k8s_config: ../.kubectl.cfg\n    k8s_context: default\n  roles:\n"
+		content := "---\n- hosts: 127.0.0.1\n  any_errors_fatal: true\n  gather_facts: false\n  vars:\n    k8s_config: ../.kubectl.cfg\n    k8s_context: default\n  roles:\n"
 		content = fmt.Sprintf("%s%s", content, fmt.Sprintf("    - %s\n", name))
 
 		if _, err = file.WriteString(content); err != nil {
