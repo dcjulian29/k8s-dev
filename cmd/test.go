@@ -75,8 +75,8 @@ var testCmd = &cobra.Command{
 		cobra.CheckErr(err)
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
-		ensureVagrantfile()
-		ensureKubectlfile()
+		cobra.CheckErr(ensureVagrantfile())
+		cobra.CheckErr(ensureKubectlfile())
 	},
 }
 
