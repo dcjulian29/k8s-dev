@@ -25,8 +25,8 @@ import (
 var testCmd = &cobra.Command{
 	Use:   "test <role>",
 	Args:  cobra.ExactArgs(1),
-	Short: "Test a kubernetes role against Kubernetes development vagrant environment",
-	Long:  "Test a kubernetes role against Kubernetes development vagrant environment",
+	Short: "Test a role against Kubernetes development vagrant environment",
+	Long:  "Test a role against Kubernetes development vagrant environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		name := args[0]
 		step, _ := cmd.Flags().GetBool("step")
@@ -52,8 +52,8 @@ var testCmd = &cobra.Command{
 
 		defer file.Close()
 
-		content := "---\n- hosts: 127.0.0.1\n  any_errors_fatal: true\n  gather_facts: false\n  vars:\n    k8s_config: ../.kubectl.cfg\n    k8s_context: default\n  roles:\n"
-		content = fmt.Sprintf("%s%s", content, fmt.Sprintf("    - %s\n", name))
+		content := "---\n- hosts: 127.0.0.1\n  gather_facts: false\n\n  vars:\n    k8s_config: ../.kubectl.cfg\n    k8s_context: default\n\n  roles:\n"
+		content = fmt.Sprintf("%s%s", content, fmt.Sprintf("    - role: %s\n", name))
 
 		if _, err = file.WriteString(content); err != nil {
 			cobra.CheckErr(err)
