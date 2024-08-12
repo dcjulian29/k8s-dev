@@ -16,13 +16,14 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/spf13/cobra"
 )
 
 var createCmd = &cobra.Command{
-	Use:     "create [node]",
+	Use:     "create",
 	Aliases: []string{"up"},
 	Short:   "Create the Kubernetes development Vagrant environment",
 	Long:    "Create the Kubernetes development Vagrant environment",
@@ -38,6 +39,21 @@ var createCmd = &cobra.Command{
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
+		cobra.CheckErr(ensureVagrantfile())
+		err := ensureKubectlfile()
+
+		if err == nil {
+
+			printMessage("kubernetes cluster is currently deployed")
+			destroy := askForConfirmation("Are you sure you want to recreate the cluster?")
+
+			if destroy {
+				vagrantDestroy(strings.Join(args, " "), true)
+				removeFile(".kubectl.cfg")
+			} else {
+				cobra.CheckErr(fmt.Errorf("cluster cannot be created while it exists"))
+			}
+		}
 	},
 }
 

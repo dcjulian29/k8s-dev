@@ -57,6 +57,14 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&folderPath, "path", pwd, "path to development folder")
 }
 
+func ensureKubectlfile() error {
+	if !fileExists(".kubectl.cfg") {
+		return fmt.Errorf("can't find the kubectl.cfg file")
+	}
+
+	return nil
+}
+
 func ensureRootDirectory() {
 	if workingDirectory != folderPath {
 		err := os.Chdir(folderPath)

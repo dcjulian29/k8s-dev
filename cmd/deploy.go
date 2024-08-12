@@ -50,6 +50,15 @@ var deployCmd = &cobra.Command{
 			cobra.CheckErr(err)
 		}
 	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		ensureRootDirectory()
+		cobra.CheckErr(ensureVagrantfile())
+		err := ensureKubectlfile()
+
+		if err == nil {
+			cobra.CheckErr(fmt.Errorf("%s has already been deployed", "kubernetes"))
+		}
+	},
 }
 
 func init() {

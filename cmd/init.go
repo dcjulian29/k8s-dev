@@ -67,6 +67,9 @@ var initCmd = &cobra.Command{
 		printSubMessage("restoring roles")
 		cobra.CheckErr(executeExternalProgram("ansible-galaxy", append([]string{"role"}, params...)...))
 	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		ensureRootDirectory()
+	},
 }
 
 func init() {

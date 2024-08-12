@@ -36,6 +36,8 @@ var controlCmd = &cobra.Command{
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
+		cobra.CheckErr(ensureVagrantfile())
+		cobra.CheckErr(ensureKubectlfile())
 	},
 }
 

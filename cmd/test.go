@@ -86,11 +86,3 @@ func init() {
 	testCmd.Flags().BoolP("verbose", "v", false, "tell Ansible to print more debug messages")
 	testCmd.Flags().Bool("step", false, "one-step-at-a-time: confirm each task before running")
 }
-
-func ensureKubectlfile() error {
-	if !fileExists(".kubectl.cfg") {
-		return fmt.Errorf("can't find the kubectl.cfg file")
-	}
-
-	return nil
-}

@@ -27,6 +27,10 @@ var pingCmd = &cobra.Command{
 		executeExternalProgram("vagrant", "provision")
 		executeExternalProgram("ansible", "-m", "ping", "all")
 	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		ensureRootDirectory()
+		cobra.CheckErr(ensureVagrantfile())
+	},
 }
 
 func init() {

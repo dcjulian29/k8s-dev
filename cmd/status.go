@@ -27,6 +27,10 @@ var statusCmd = &cobra.Command{
 		cobra.CheckErr(ensureVagrantfile())
 		executeExternalProgram("vagrant", "status")
 	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		ensureRootDirectory()
+		cobra.CheckErr(ensureVagrantfile())
+	},
 }
 
 func init() {

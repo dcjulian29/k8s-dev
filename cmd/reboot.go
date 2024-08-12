@@ -26,6 +26,11 @@ var rebootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		executeExternalProgram("ansible-playbook", "playbooks/reboot.yml")
 	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		ensureRootDirectory()
+		cobra.CheckErr(ensureVagrantfile())
+		cobra.CheckErr(ensureKubectlfile())
+	},
 }
 
 func init() {
