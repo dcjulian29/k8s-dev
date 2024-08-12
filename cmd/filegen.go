@@ -29,10 +29,12 @@ duplicate_dict_key          = error
 error_on_undefined_vars     = true
 gathering                   = smart
 host_key_checking           = false
+interpreter_python          = auto_silent
 inventory                   = ./hosts.ini
 log_path                    = ./ansible.log
-roles_path                  = ./roles:./k3s-ansible/roles
+roles_path                  = ./roles
 stdout_callback             = community.general.yaml
+verbosity                   = 2
 `))
 }
 
@@ -47,7 +49,6 @@ enable_list:
   - yaml
 exclude_paths:
   - roles/
-  - k3s-ansible/
 kinds:
   - playbook: "playbooks/*.yml"
 profile: production
@@ -88,7 +89,7 @@ func createFile(filePath string, content []byte) error {
 
 func init_yml() error {
 	return createFile("playbooks/init.yml", []byte(`---
-- name: Initialize node
+- name: Initialize baseline for kubernetes cluster
   hosts: k3s_cluster
   become: true
 
@@ -104,18 +105,20 @@ func init_yml() error {
         state: present
         validate: 'visudo -cf %s'
         mode: "0644"
+      notify: Reboot node
 
-    - name: Reboot and wait each node to come back up
+  handlers:
+    - name: Reboot node
       ansible.builtin.reboot:
 
-- name: Initialize new kubernetes cluster
+- name: Initialize kubernetes cluster
   hosts: k3s_cluster
   become: true
 
   roles:
-    - role: prereq
-    - role: download
-    - role: k3s_custom_registries
+    - role: techno_tim.k3s_ansible.prereq
+    - role: techno_tim.k3s_ansible.download
+    - role: techno_tim.k3s_ansible.k3s_custom_registries
       when: custom_registries
 
 - name: Setup kubernetes servers
@@ -123,21 +126,21 @@ func init_yml() error {
   become: true
 
   roles:
-    - role: k3s_server
+    - role: techno_tim.k3s_ansible.k3s_server
 
 - name: Setup kubernetes agents
   hosts: node
   become: true
 
   roles:
-    - role: k3s_agent
+    - role: techno_tim.k3s_ansible.k3s_agent
 
 - name: Configure k3s cluster
   hosts: master
   become: true
 
   roles:
-    - role: k3s_server_post
+    - role: techno_tim.k3s_ansible.k3s_server_post
 
   post_tasks:
     - name: Retrieve kubernetes configuration for this cluster
@@ -168,7 +171,6 @@ func inventory_file(servers, agents int) error {
 	sb.WriteString("\n[all:vars]\n")
 	sb.WriteString("ansible_user=vagrant\n")
 	sb.WriteString("ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o CheckHostIP=no'\n")
-	sb.WriteString("ansible_port=22\n")
 	sb.WriteString("ansible_ssh_private_key_file=~/.ssh/insecure_private_key\n")
 
 	return createFile("hosts.ini", []byte(sb.String()))
@@ -181,14 +183,33 @@ func all_yml() error {
 
 func k3s_cluster_yml() error {
 	return createFile("group_vars/k3s_cluster.yml", []byte(`---
-apiserver_endpoint: "192.168.57.10"
+apiserver_endpoint: "192.168.57.30"
+# calico_ebpf: false
+# calico_iface: eth1
+# calico_tag: "v3.28.0"
+cilium_bgp: false
+# cilium_bgp_lb_cidr: "192.168.57.0/24"
+# cilium_bgp_my_asn: "64513"
+# cilium_bgp_peer_address: "192.168.57.1"
+# cilium_bgp_peer_asn: "64512"
+# cilium_hubble: true
+# cilium_iface: eth1
+# cilium_mode: "native"
+# cilium_tag: "v1.16.0"
+cluster_cidr: "10.52.0.0/16"
 custom_registries: false
+custom_registries_yaml: ""
 extra_args: >-
-  --flannel-iface={{ flannel_iface }}
+  {{ '--flannel-iface=' + flannel_iface if calico_iface is not defined and cilium_iface is not defined else '' }}
   --node-ip={{ k3s_node_ip }}
 extra_server_args: >-
   {{ extra_args }}
   {{ '--node-taint node-role.kubernetes.io/master=true:NoSchedule' if k3s_master_taint else '' }}
+  {% if calico_iface is defined or cilium_iface is defined %}
+  --flannel-backend=none
+  --disable-network-policy
+  --cluster-cidr={{ cluster_cidr }}
+  {% endif %}
   --tls-san {{ apiserver_endpoint }}
   --disable servicelb
   --disable traefik
@@ -196,18 +217,26 @@ extra_agent_args: >-
   {{ extra_args }}
 flannel_iface: "{{ 'enp0s8' if ansible_distribution == 'Ubuntu' else 'eth1' }}"
 k3s_master_taint: "{{ true if groups['node'] | default([]) | length >= 1 else false }}"
-k3s_node_ip: '{{ ansible_facts[flannel_iface]["ipv4"]["address"] }}'
-k3s_token: Sup3rS3cr3t!
-kube_vip_iface: "{{ flannel_iface }}"
-k3s_version: v1.25.12+k3s1
-kube_vip_tag_version: "v0.5.12"
-log_destination: true
-metal_lb_controller_tag_version: "v0.13.9"
-metal_lb_ip_range: "192.168.57.30-192.168.57.99"
+k3s_node_ip: "{{ ansible_facts[(cilium_iface | default(calico_iface | default(flannel_iface)))]['ipv4']['address'] }}"
+k3s_token: For-Development-Purposes-Only!
+k3s_version: v1.30.2+k3s2
+kube_vip_iface: "{{ 'enp0s8' if ansible_distribution == 'Ubuntu' else 'eth1' }}"
+# kube_vip_lb_ip_range: "192.168.57.31-192.168.57.49"
+kube_vip_tag_version: "v0.8.2"
+log_destination: false
+# metal_lb_bgp_my_asn: "64513"
+# metal_lb_bgp_peer_asn: "64512"
+# metal_lb_bgp_peer_address: "192.168.57.1"
+metal_lb_controller_tag_version: "v0.14.8"
+metal_lb_ip_range: "192.168.57.31-192.168.57.49"
 metal_lb_mode: layer2
-metal_lb_speaker_tag_version: "v0.13.9"
+metal_lb_speaker_tag_version: "v0.14.8"
 metal_lb_type: native
-proxmox_lxc_configure: false
+# proxmox_lxc_configure: false
+# proxmox_lxc_ct_ids:
+#   - 200
+#   - 201
+#   - 202
 systemd_dir: /etc/systemd/system
 system_timezone: "American/New_York"
 `))
@@ -239,56 +268,14 @@ func reset_yml() error {
   become: true
 
   roles:
-    - role: reset
+    - role: techno_tim.k3s_ansible.reset
 
   post_tasks:
     - name: Reboot and wait each node to come back up
       ansible.builtin.reboot:
 
-- name: Initialize new kubernetes cluster
-  hosts: k3s_cluster
-  any_errors_fatal: true
-  become: true
-
-  roles:
-    - role: prereq
-    - role: download
-    - role: k3s_custom_registries
-      when: custom_registries
-
-- name: Setup kubernetes servers
-  hosts: master
-  any_errors_fatal: true
-  become: true
-
-  roles:
-    - role: k3s_server
-
-- name: Setup kubernetes agents
-  hosts: node
-  any_errors_fatal: true
-  become: true
-
-  roles:
-    - role: k3s_agent
-
-- name: Configure k3s cluster
-  hosts: master
-  any_errors_fatal: true
-  become: true
-
-  roles:
-    - role: k3s_server_post
-
-  post_tasks:
-    - name: Retrieve kubernetes configuration for this cluster
-      ansible.builtin.fetch:
-        src: ~/.kube/config
-        dest: ../.kubectl.cfg
-        flat: true
-
-      when:
-        - ansible_hostname == hostvars[groups['master'][0]]['ansible_hostname']
+- name: Initialize kubernetes cluster
+  ansible.builtin.import_playbook: init.yml
 `))
 }
 
@@ -299,6 +286,9 @@ collections:
   - name: ansible.utils
   - name: community.general
   - name: kubernetes.core
+  - name: https://github.com/techno-tim/k3s-ansible.git
+    type: git
+    version: master
 roles:
   - name: dcjulian29.base
     src: https://github.com/dcjulian29/ansible-role-base.git
@@ -313,7 +303,6 @@ func testNeedForce(force bool) error {
 		"group_vars",
 		"playbooks",
 		"roles",
-		"k3s-ansible",
 	}
 
 	files := []string{
@@ -353,7 +342,8 @@ func vagrant_file(servers, agents int, box string) error {
     vb.customize [ "modifyvm", :id, "--uartmode1", "disconnected" ]
     vb.customize [ "modifyvm", :id, "--graphicscontroller", "vmsvga"]
     vb.customize [ "modifyvm", :id, "--ioapic", "on"]
-    vb.customize [ "modifyvm", :id, "--nicpromisc2", "allow-vms" ]
+    vb.customize [ "modifyvm", :id, "--nic-promisc2", "allow-all" ]
+    vb.customize [ "modifyvm", :id, "--nested-hw-virt", "on" ]
   end
 
   (1..SERVER_NUMBER).each do |i|
