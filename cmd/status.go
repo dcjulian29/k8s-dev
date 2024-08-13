@@ -16,6 +16,8 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 )
 
@@ -24,8 +26,21 @@ var statusCmd = &cobra.Command{
 	Short: "Output machine status of the Kubernetes development environment",
 	Long:  "Output machine status of the Kubernetes development environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		cobra.CheckErr(ensureVagrantfile())
 		executeExternalProgram("vagrant", "status")
+
+		err := ensureKubectlfile()
+
+		if err == nil {
+			output, err := executeCommand("kubectl", "--kubeconfig=./.kubectl.cfg", "get", "nodes")
+			printSubMessage("Cluster Nodes")
+			fmt.Println(output)
+			cobra.CheckErr(err)
+
+			output, err = executeCommand("kubectl", "--kubeconfig=.kubectl.cfg", "get", "pods", "--all-namespaces")
+			printSubMessage("Cluster Pods")
+			fmt.Println(output)
+			cobra.CheckErr(err)
+		}
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
