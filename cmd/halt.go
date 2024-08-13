@@ -27,7 +27,7 @@ var haltCmd = &cobra.Command{
 	Long:  "Halt the Kubernetes development vagrant environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		force, _ := cmd.Flags().GetBool("force")
-		vagrantHalt(strings.Join(args, " "), force)
+		cobra.CheckErr(vagrantHalt(strings.Join(args, " "), force))
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()

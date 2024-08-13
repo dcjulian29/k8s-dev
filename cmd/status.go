@@ -26,20 +26,24 @@ var statusCmd = &cobra.Command{
 	Short: "Output machine status of the Kubernetes development environment",
 	Long:  "Output machine status of the Kubernetes development environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		executeExternalProgram("vagrant", "status")
+		cobra.CheckErr(executeExternalProgram("vagrant", "status"))
 
 		err := ensureKubectlfile()
 
 		if err == nil {
 			output, err := executeCommand("kubectl", "--kubeconfig=./.kubectl.cfg", "get", "nodes")
-			printSubMessage("Cluster Nodes")
-			fmt.Println(output)
+
 			cobra.CheckErr(err)
 
+			printSubMessage("Cluster Nodes")
+			fmt.Println(output)
+
 			output, err = executeCommand("kubectl", "--kubeconfig=.kubectl.cfg", "get", "pods", "--all-namespaces")
+
+			cobra.CheckErr(err)
+
 			printSubMessage("Cluster Pods")
 			fmt.Println(output)
-			cobra.CheckErr(err)
 		}
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {

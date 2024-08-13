@@ -24,7 +24,7 @@ var rebootCmd = &cobra.Command{
 	Short: "Reboot the Kubernetes development vagrant environment",
 	Long:  "Reboot the Kubernetes development vagrant environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		executeExternalProgram("ansible-playbook", "playbooks/reboot.yml")
+		cobra.CheckErr(executeExternalProgram("ansible-playbook", "playbooks/reboot.yml"))
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()

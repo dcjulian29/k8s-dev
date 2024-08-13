@@ -29,7 +29,7 @@ var createCmd = &cobra.Command{
 	Long:    "Create the Kubernetes development Vagrant environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		provision, _ := cmd.Flags().GetBool("provision")
-		vagrantUp(strings.Join(args, " "), provision)
+		cobra.CheckErr(vagrantUp(strings.Join(args, " "), provision))
 
 		deploy, _ := cmd.Flags().GetBool("deploy")
 

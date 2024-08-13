@@ -26,8 +26,7 @@ var deployCmd = &cobra.Command{
 	Short: "Deploy the Kubernetes development vagrant environment",
 	Long:  "Deploy the Kubernetes development vagrant environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := executeExternalProgram("ansible-playbook", "playbooks/init.yml")
-		cobra.CheckErr(err)
+		cobra.CheckErr(executeExternalProgram("ansible-playbook", "playbooks/init.yml"))
 
 		nodes, _ := cmd.Flags().GetBool("nodes")
 		pods, _ := cmd.Flags().GetBool("pods")
@@ -35,19 +34,19 @@ var deployCmd = &cobra.Command{
 		if nodes {
 			output, err := executeCommand("kubectl", "--kubeconfig=./.kubectl.cfg", "get", "nodes")
 
+			cobra.CheckErr(err)
+
 			printSubMessage("Cluster Nodes")
 			fmt.Println(output)
-
-			cobra.CheckErr(err)
 		}
 
 		if pods {
 			output, err := executeCommand("kubectl", "--kubeconfig=.kubectl.cfg", "get", "pods", "--all-namespaces")
 
+			cobra.CheckErr(err)
+
 			printSubMessage("Cluster Pods")
 			fmt.Println(output)
-
-			cobra.CheckErr(err)
 		}
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {

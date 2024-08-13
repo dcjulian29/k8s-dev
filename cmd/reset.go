@@ -31,15 +31,11 @@ var resetCmd = &cobra.Command{
 		recreate, _ := cmd.Flags().GetBool("recreate")
 
 		if recreate {
-			err := vagrantDestroy(strings.Join(args, " "), true)
-			cobra.CheckErr(err)
-			err = vagrantUp(strings.Join(args, " "), true)
-			cobra.CheckErr(err)
-			err = executeExternalProgram("ansible-playbook", "playbooks/init.yml")
-			cobra.CheckErr(err)
+			cobra.CheckErr(vagrantDestroy(strings.Join(args, " "), true))
+			cobra.CheckErr(vagrantUp(strings.Join(args, " "), true))
+			cobra.CheckErr(executeExternalProgram("ansible-playbook", "playbooks/init.yml"))
 		} else {
-			err := executeExternalProgram("ansible-playbook", "playbooks/reset.yml")
-			cobra.CheckErr(err)
+			cobra.CheckErr(executeExternalProgram("ansible-playbook", "playbooks/reset.yml"))
 		}
 
 		nodes, _ := cmd.Flags().GetBool("nodes")

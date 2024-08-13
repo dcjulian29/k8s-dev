@@ -33,15 +33,11 @@ var testCmd = &cobra.Command{
 		verbose, _ := cmd.Flags().GetBool("verbose")
 
 		if fileExists(".tmp/play.yml") {
-			if err := os.Remove(".tmp/play.yml"); err != nil {
-				cobra.CheckErr(err)
-			}
+			cobra.CheckErr(os.Remove(".tmp/play.yml"))
 		}
 
 		if !dirExists(".tmp") {
-			if err := os.Mkdir(".tmp", 0755); err != nil {
-				cobra.CheckErr(err)
-			}
+			cobra.CheckErr(os.Mkdir(".tmp", 0755))
 		}
 
 		file, err := os.Create(".tmp/play.yml")
@@ -71,10 +67,10 @@ var testCmd = &cobra.Command{
 
 		param = append(param, ".tmp/play.yml")
 
-		err = executeExternalProgram("ansible-playbook", param...)
-		cobra.CheckErr(err)
+		cobra.CheckErr(executeExternalProgram("ansible-playbook", param...))
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
+		ensureRootDirectory()
 		cobra.CheckErr(ensureVagrantfile())
 		cobra.CheckErr(ensureKubectlfile())
 	},

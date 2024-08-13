@@ -28,7 +28,9 @@ var helmCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		params := append(args, "--kubeconfig=./.kubectl.cfg", "--kube-context=default")
 
-		output, _ := executeCommand("helm", params...)
+		output, err := executeCommand("helm", params...)
+
+		cobra.CheckErr(err)
 
 		fmt.Println(output)
 	},

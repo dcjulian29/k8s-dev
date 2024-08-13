@@ -30,7 +30,9 @@ var virtualCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		params := append(args, "--kubeconfig=./.kubectl.cfg")
 
-		output, _ := executeCommand("virtctl", params...)
+		output, err := executeCommand("virtctl", params...)
+
+		cobra.CheckErr(err)
 
 		fmt.Println(output)
 	},

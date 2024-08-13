@@ -30,7 +30,9 @@ var controlCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		params := append(args, "--kubeconfig=./.kubectl.cfg")
 
-		output, _ := executeCommand("kubectl", params...)
+		output, err := executeCommand("kubectl", params...)
+
+		cobra.CheckErr(err)
 
 		fmt.Println(output)
 	},

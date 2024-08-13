@@ -24,8 +24,8 @@ var pingCmd = &cobra.Command{
 	Short: "Ping the Kubernetes development vagrant environment",
 	Long:  "Ping the Kubernetes development vagrant environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		executeExternalProgram("vagrant", "provision")
-		executeExternalProgram("ansible", "-m", "ping", "all")
+		cobra.CheckErr(executeExternalProgram("vagrant", "provision"))
+		cobra.CheckErr(executeExternalProgram("ansible", "-m", "ping", "all"))
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
