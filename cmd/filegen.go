@@ -238,7 +238,7 @@ metal_lb_type: native
 #   - 201
 #   - 202
 systemd_dir: /etc/systemd/system
-system_timezone: "American/New_York"
+system_timezone: "America/New_York"
 `))
 }
 
