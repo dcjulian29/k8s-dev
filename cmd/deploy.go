@@ -55,7 +55,11 @@ var deployCmd = &cobra.Command{
 		err := ensureKubectlfile()
 
 		if err == nil {
-			cobra.CheckErr(fmt.Errorf("%s has already been deployed", "kubernetes"))
+			force, _ := cmd.Flags().GetBool("force")
+
+			if !force {
+				cobra.CheckErr(fmt.Errorf("%s has already been deployed", "kubernetes"))
+			}
 		}
 	},
 }
@@ -65,4 +69,5 @@ func init() {
 
 	deployCmd.Flags().BoolP("nodes", "n", true, "Show nodes of deployed cluster")
 	deployCmd.Flags().BoolP("pods", "p", false, "Show pods of deployed cluster")
+	deployCmd.Flags().BoolP("force", "f", false, "force redeployment of cluster")
 }

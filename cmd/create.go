@@ -45,7 +45,16 @@ var createCmd = &cobra.Command{
 		if err == nil {
 
 			printMessage("kubernetes cluster is currently deployed")
-			destroy := askForConfirmation("Are you sure you want to recreate the cluster?")
+
+			force, _ := cmd.Flags().GetBool("force")
+
+			var destroy bool
+
+			if force {
+				destroy = true
+			} else {
+				destroy = askForConfirmation("Are you sure you want to recreate the cluster?")
+			}
 
 			if destroy {
 				vagrantDestroy(strings.Join(args, " "), true)
@@ -62,4 +71,5 @@ func init() {
 
 	createCmd.Flags().BoolP("provision", "p", true, "run the Vagrant provisioner")
 	createCmd.Flags().BoolP("deploy", "d", false, "deploy the Kubernetes cluster")
+	createCmd.Flags().BoolP("force", "f", false, "force recreation of the Kubernetes cluster")
 }
