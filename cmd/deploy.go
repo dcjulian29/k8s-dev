@@ -36,7 +36,7 @@ var deployCmd = &cobra.Command{
 
 			cobra.CheckErr(err)
 
-			printSubMessage("Cluster Nodes")
+			printSubMessage("Environment Nodes")
 			fmt.Println(output)
 		}
 
@@ -45,7 +45,7 @@ var deployCmd = &cobra.Command{
 
 			cobra.CheckErr(err)
 
-			printSubMessage("Cluster Pods")
+			printSubMessage("Environment Pods")
 			fmt.Println(output)
 		}
 	},
@@ -67,7 +67,7 @@ var deployCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(deployCmd)
 
-	deployCmd.Flags().BoolP("nodes", "n", true, "Show nodes of deployed cluster")
-	deployCmd.Flags().BoolP("pods", "p", false, "Show pods of deployed cluster")
-	deployCmd.Flags().BoolP("force", "f", false, "force redeployment of cluster")
+	deployCmd.Flags().BoolP("nodes", "n", true, "Show nodes of deployed environment")
+	deployCmd.Flags().BoolP("pods", "p", false, "Show pods of deployed environment")
+	deployCmd.Flags().BoolP("force", "f", false, "force redeployment of environment")
 }
