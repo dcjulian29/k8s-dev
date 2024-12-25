@@ -29,11 +29,13 @@ var destroyCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		force, _ := cmd.Flags().GetBool("force")
 		if !force {
-			force = askForConfirmation("Are you sure you want to destroy the cluster?")
+			force = askForConfirmation("Are you sure you want to destroy the environment?")
 		}
 
-		cobra.CheckErr(vagrantDestroy(strings.Join(args, " "), force))
-		cobra.CheckErr(removeFile(".kubectl.cfg"))
+		if force {
+			cobra.CheckErr(vagrantDestroy(strings.Join(args, " "), force))
+			cobra.CheckErr(removeFile(".kubectl.cfg"))
+		}
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
