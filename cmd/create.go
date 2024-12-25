@@ -25,8 +25,8 @@ import (
 var createCmd = &cobra.Command{
 	Use:     "create",
 	Aliases: []string{"up"},
-	Short:   "Create the Kubernetes development Vagrant environment",
-	Long:    "Create the Kubernetes development Vagrant environment",
+	Short:   "Create the Kubernetes development environment using Vagrant",
+	Long:    "Create the Kubernetes development environment using Vagrant",
 	Run: func(cmd *cobra.Command, args []string) {
 		provision, _ := cmd.Flags().GetBool("provision")
 		cobra.CheckErr(vagrantUp(strings.Join(args, " "), provision))
