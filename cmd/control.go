@@ -25,7 +25,7 @@ var controlCmd = &cobra.Command{
 	Use:                "control",
 	Short:              "Control the Kubernetes development vagrant environment",
 	Long:               "Control the Kubernetes development vagrant environment",
-	Aliases:            []string{"kubectl"},
+	Aliases:            []string{"kubectl", "ctl"},
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		params := append(args, "--kubeconfig=./.kubectl.cfg")
