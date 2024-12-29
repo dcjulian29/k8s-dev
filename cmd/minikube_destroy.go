@@ -42,6 +42,10 @@ var minikube_destroyCmd = &cobra.Command{
 		if !isMinikubeEnv() {
 			cobra.CheckErr(errors.New("the Minikube environment does not exist"))
 		}
+
+		if !isMinikubeRunning() {
+			cobra.CheckErr(errors.New("the Minikube environment is not running"))
+		}
 	},
 }
 
