@@ -30,16 +30,8 @@ var minikube_createCmd = &cobra.Command{
 	Short:   "Create the Kubernetes development Minikube environment",
 	Long:    "Create the Kubernetes development Minikube environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := ensureMinikubeRunning()
-
-		if err == nil {
-			cobra.CheckErr(fmt.Errorf("environment is already running"))
-		}
-
-		//docker network create --driver=bridge --subnet=192.168.58.0/24 --gateway=192.168.58.1 minikube
-
 		cni, _ := cmd.Flags().GetString("cni")
-		nodes, _ := cmd.Flags().GetInt("nodes")
+		nodes, _ := cmd.Flags().GetInt("total-nodes")
 		ha, _ := cmd.Flags().GetBool("ha")
 
 		cni = strings.ToLower(cni)
@@ -76,9 +68,8 @@ var minikube_createCmd = &cobra.Command{
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
-		err := ensureMinikubeRunning()
 
-		if err == nil {
+		if isMinikubeRunning() {
 			printMessage("kubernetes is currently deployed")
 
 			force, _ := cmd.Flags().GetBool("force")

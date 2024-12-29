@@ -16,6 +16,8 @@ limitations under the License.
 package cmd
 
 import (
+	"errors"
+
 	"github.com/spf13/cobra"
 )
 
@@ -37,7 +39,9 @@ var minikube_destroyCmd = &cobra.Command{
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
 
-		cobra.CheckErr(ensureMinikubeRunning())
+		if !isMinikubeEnv() {
+			cobra.CheckErr(errors.New("the Minikube environment does not exist"))
+		}
 	},
 }
 

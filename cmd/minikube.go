@@ -17,7 +17,6 @@ package cmd
 
 import (
 	b64 "encoding/base64"
-	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -41,7 +40,15 @@ func init() {
 	rootCmd.AddCommand(minikubeCmd)
 }
 
-func ensureMinikubeRunning() error {
+func isMinikubeEnv() bool {
+	return dirExists("./.minikube")
+}
+
+func isMinikubeRunning() bool {
+	if !isMinikubeEnv() {
+		return false
+	}
+
 	env := []string{
 		"KUBECONFIG=./.kubectl.cfg",
 	}
@@ -49,14 +56,10 @@ func ensureMinikubeRunning() error {
 	_, err := executeCommandEnv("minikube", env, "status")
 
 	if err != nil {
-		if err.Error() == "exit status 4" {
-			return nil
-		}
-
-		return fmt.Errorf("environment isn't running")
+		return err.Error() == "exit status 4"
 	}
 
-	return nil
+	return true
 }
 
 func removeMinikube() error {

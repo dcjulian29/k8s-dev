@@ -63,12 +63,10 @@ var deployCmd = &cobra.Command{
 		ensureRootDirectory()
 		cobra.CheckErr(ensureVagrantfile())
 
-		err := ensureMinikubeRunning()
-
-		if err != nil {
-			// Vagrant environments initialize Kubernetes in the VM(s) via playbook
+		if !isMinikubeRunning() {
+			// Vagrant environments initialize Kubernetes via a playbook
 			// so deployment would have to be forced if already deployed.
-			err = ensureKubectlfile()
+			err := ensureKubectlfile()
 
 			if err == nil {
 				force, _ := cmd.Flags().GetBool("force")
