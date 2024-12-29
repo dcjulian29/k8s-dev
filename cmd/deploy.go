@@ -21,12 +21,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var miniKube_deploy bool = false
+
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
-	Short: "Deploy the Kubernetes development vagrant environment",
-	Long:  "Deploy the Kubernetes development vagrant environment",
+	Short: "Deploy the Kubernetes development environment",
+	Long:  "Deploy the Kubernetes development environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		cobra.CheckErr(executeExternalProgram("ansible-playbook", "playbooks/init.yml"))
+		if miniKube_deploy {
+			env := []string{
+				"K8S_AUTH_VERIFY_SSL=false",
+			}
+
+			cobra.CheckErr(executeExternalProgramEnv("ansible-playbook", env, "playbooks/config.yml"))
+		} else {
+			cobra.CheckErr(executeExternalProgram("ansible-playbook", "playbooks/init.yml"))
+		}
 
 		nodes, _ := cmd.Flags().GetBool("nodes")
 		pods, _ := cmd.Flags().GetBool("pods")
@@ -41,7 +51,7 @@ var deployCmd = &cobra.Command{
 		}
 
 		if pods {
-			output, err := executeCommand("kubectl", "--kubeconfig=.kubectl.cfg", "get", "pods", "--all-namespaces")
+			output, err := executeCommand("kubectl", "--kubeconfig=./.kubectl.cfg", "get", "pods", "--all-namespaces")
 
 			cobra.CheckErr(err)
 
@@ -52,14 +62,23 @@ var deployCmd = &cobra.Command{
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
 		cobra.CheckErr(ensureVagrantfile())
-		err := ensureKubectlfile()
 
-		if err == nil {
-			force, _ := cmd.Flags().GetBool("force")
+		err := ensureMinikubeRunning()
 
-			if !force {
-				cobra.CheckErr(fmt.Errorf("%s has already been deployed", "kubernetes"))
+		if err != nil {
+			// Vagrant environments initialize Kubernetes in the VM(s) via playbook
+			// so deployment would have to be forced if already deployed.
+			err = ensureKubectlfile()
+
+			if err == nil {
+				force, _ := cmd.Flags().GetBool("force")
+
+				if !force {
+					cobra.CheckErr(fmt.Errorf("%s has already been deployed", "kubernetes"))
+				}
 			}
+		} else {
+			miniKube_deploy = true
 		}
 	},
 }
