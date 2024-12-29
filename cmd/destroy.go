@@ -24,8 +24,8 @@ import (
 var destroyCmd = &cobra.Command{
 	Use:     "destroy [node]",
 	Aliases: []string{"down"},
-	Short:   "Destroy the Kubernetes development vagrant environment",
-	Long:    "Destroy the Kubernetes development vagrant environment",
+	Short:   "Destroy the Kubernetes development environment",
+	Long:    "Destroy the Kubernetes development environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		force, _ := cmd.Flags().GetBool("force")
 		if !force {
@@ -39,7 +39,9 @@ var destroyCmd = &cobra.Command{
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
-		cobra.CheckErr(ensureVagrantfile())
+		if isVagrantEnv() {
+			cobra.CheckErr(ensureVagrantfile())
+		}
 	},
 }
 

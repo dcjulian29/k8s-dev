@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 Julian Easterling <julian@julianscorner.com>
+Copyright © 2024 Julian Easterling <julian@julianscorner.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@ limitations under the License.
 */
 package cmd
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 func ensureVagrantfile() error {
 	if !fileExists("Vagrantfile") {
@@ -23,6 +26,10 @@ func ensureVagrantfile() error {
 	}
 
 	return nil
+}
+
+func isVagrantEnv() bool {
+	return dirExists("./.vagrant")
 }
 
 func vagrantDestroy(name string, force bool) error {
@@ -46,7 +53,11 @@ func vagrantDestroy(name string, force bool) error {
 		param = append(param, "--force")
 	}
 
-	return executeExternalProgram("vagrant", param...)
+	if err := executeExternalProgram("vagrant", param...); err != nil {
+		return err
+	}
+
+	return os.RemoveAll("./.vagrant")
 }
 
 func vagrantHalt(name string, force bool) error {
