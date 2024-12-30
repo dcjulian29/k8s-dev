@@ -56,30 +56,6 @@ func vagrantDestroy() error {
 	return nil
 }
 
-func vagrantHalt(name string, force bool) error {
-	if err := ensureVagrantfile(); err != nil {
-		return err
-	}
-
-	param := []string{
-		"halt",
-	}
-
-	if len(name) > 0 {
-		fmt.Println(Info(fmt.Sprintf("Halting '%s' machine...", name)))
-
-		param = append(param, name)
-	} else {
-		fmt.Println(Info("Halting all vagrant machines..."))
-	}
-
-	if force {
-		param = append(param, "--force")
-	}
-
-	return executeExternalProgram("vagrant", param...)
-}
-
 func vagrantUp(name string, provision bool) error {
 	if err := ensureVagrantfile(); err != nil {
 		return err
