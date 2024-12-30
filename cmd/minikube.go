@@ -70,3 +70,15 @@ func minikubeDestroy() error {
 
 	return nil
 }
+
+func validateMinikubeNetwork(provider string) error {
+	validNetworks := []string{"calico", "cilium", "flannel"}
+
+	for _, validNetwork := range validNetworks {
+		if provider == validNetwork {
+			return nil
+		}
+	}
+
+	return fmt.Errorf("'%s' is invalid for CNI. Valid options: calico, cilium, flannel", provider)
+}
