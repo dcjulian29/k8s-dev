@@ -16,6 +16,8 @@ limitations under the License.
 package cmd
 
 import (
+	"errors"
+
 	"github.com/spf13/cobra"
 )
 
@@ -29,6 +31,10 @@ var pingCmd = &cobra.Command{
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
+		if isMinikubeEnv() {
+			cobra.CheckErr(errors.New("the ping command isn't applicable to a minikube environment"))
+		}
+
 		cobra.CheckErr(ensureVagrantfile())
 	},
 }
