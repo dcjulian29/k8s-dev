@@ -26,15 +26,11 @@ var dashboardCmd = &cobra.Command{
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		if isMinikubeEnv() {
-			env := []string{
-				"KUBECONFIG=./.kubectl.cfg",
-			}
-
-			cobra.CheckErr(executeExternalProgramEnv("minikube", env, "dashboard"))
+			cobra.CheckErr(runMinikube("dashboard"))
 		}
 
 		if isVagrantEnv() {
-			cobra.CheckErr(executeExternalProgram("dashboard", "--kubeconfig=./.kubectl.cfg"))
+			cobra.CheckErr(executeExternalProgram("octant", "--kubeconfig=./.kubectl.cfg"))
 		}
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {

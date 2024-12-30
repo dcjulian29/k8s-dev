@@ -34,11 +34,7 @@ func isMinikubeRunning() bool {
 		return false
 	}
 
-	env := []string{
-		"KUBECONFIG=./.kubectl.cfg",
-	}
-
-	_, err := executeCommandEnv("minikube", env, "status")
+	err := runMinikube("status")
 
 	if err != nil {
 		return err.Error() == "exit status 4"
@@ -56,7 +52,7 @@ func minikubeDestroy() error {
 		return err
 	}
 
-	err = executeExternalProgram("minikube", "delete")
+	err = runMinikube("delete")
 
 	if err != nil {
 		return err
@@ -69,6 +65,14 @@ func minikubeDestroy() error {
 	}
 
 	return nil
+}
+
+func runMinikube(command ...string) error {
+	env := []string{
+		"KUBECONFIG=./.kubectl.cfg",
+	}
+
+	return executeExternalProgramEnv("minikube", env, command...)
 }
 
 func validateMinikubeNetwork(provider string) error {

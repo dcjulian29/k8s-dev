@@ -59,11 +59,7 @@ var createCmd = &cobra.Command{
 				param = append(param, "--ha")
 			}
 
-			env := []string{
-				"KUBECONFIG=./.kubectl.cfg",
-			}
-
-			cobra.CheckErr(executeExternalProgramEnv("minikube", env, param...))
+			cobra.CheckErr(runMinikube(param...))
 
 			configureMinikubeKubectl()
 		} else {
