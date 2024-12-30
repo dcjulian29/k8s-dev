@@ -16,29 +16,40 @@ limitations under the License.
 package cmd
 
 import (
-	"strings"
+	"errors"
 
 	"github.com/spf13/cobra"
 )
 
 var destroyCmd = &cobra.Command{
-	Use:     "destroy [node]",
+	Use:     "destroy",
 	Aliases: []string{"down"},
 	Short:   "Destroy the Kubernetes development environment",
 	Long:    "Destroy the Kubernetes development environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		force, _ := cmd.Flags().GetBool("force")
+
 		if !force {
 			force = askForConfirmation("Are you sure you want to destroy the environment?")
 		}
 
 		if force {
-			cobra.CheckErr(vagrantDestroy(strings.Join(args, " "), force))
-			cobra.CheckErr(removeFile(".kubectl.cfg"))
+			if isVagrantEnv() {
+				cobra.CheckErr(vagrantDestroy())
+			}
+
+			if isMinikubeEnv() {
+				cobra.CheckErr(minikubeDestroy())
+			}
 		}
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
+
+		if !isVagrantEnv() && !isMinikubeEnv() {
+			cobra.CheckErr(errors.New("a Kubernetes development environment not found"))
+		}
+
 		if isVagrantEnv() {
 			cobra.CheckErr(ensureVagrantfile())
 		}

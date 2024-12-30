@@ -32,32 +32,28 @@ func isVagrantEnv() bool {
 	return dirExists("./.vagrant")
 }
 
-func vagrantDestroy(name string, force bool) error {
-	if err := ensureVagrantfile(); err != nil {
+func vagrantDestroy() error {
+	fmt.Println(Info("destroying all Vagrant machines..."))
+
+	err := removeFile("./.kubectl.cfg")
+
+	if err != nil {
 		return err
 	}
 
-	param := []string{
-		"destroy",
-	}
+	err = executeExternalProgram("vagrant", "destroy", "--force")
 
-	if len(name) > 0 {
-		fmt.Println(Info(fmt.Sprintf("Destroying '%s' machine...", name)))
-
-		param = append(param, name)
-	} else {
-		fmt.Println(Info("Destroying all vagrant machines..."))
-	}
-
-	if force {
-		param = append(param, "--force")
-	}
-
-	if err := executeExternalProgram("vagrant", param...); err != nil {
+	if err != nil {
 		return err
 	}
 
-	return os.RemoveAll("./.vagrant")
+	err = os.RemoveAll("./.vagrant")
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func vagrantHalt(name string, force bool) error {

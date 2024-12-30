@@ -57,10 +57,9 @@ var createCmd = &cobra.Command{
 			}
 
 			if destroy {
-				vagrantDestroy(strings.Join(args, " "), true)
-				removeFile(".kubectl.cfg")
+				cobra.CheckErr(vagrantDestroy())
 			} else {
-				cobra.CheckErr(fmt.Errorf("cluster cannot be created while it exists"))
+				cobra.CheckErr(fmt.Errorf("environment cannot be created while it exists"))
 			}
 		}
 	},

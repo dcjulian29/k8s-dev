@@ -17,22 +17,12 @@ package cmd
 
 import (
 	b64 "encoding/base64"
+	"fmt"
 	"os"
-
-	"github.com/spf13/cobra"
 )
 
-var minikubeCmd = &cobra.Command{
-	Use:   "minikube",
-	Short: "Manage creation and destruction of the Minikube Kubernetes environment",
-	Long:  "Manage creation and destruction of the Minikube Kubernetes environment",
-	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
-	},
-}
-
-func init() {
-	rootCmd.AddCommand(minikubeCmd)
+func convertToBase64(data string) string {
+	return b64.StdEncoding.EncodeToString([]byte(data))
 }
 
 func isMinikubeEnv() bool {
@@ -57,14 +47,10 @@ func isMinikubeRunning() bool {
 	return true
 }
 
-func removeMinikube() error {
+func minikubeDestroy() error {
+	fmt.Println(Info("destroying all Minikube containers..."))
+
 	err := removeFile("./.kubectl.cfg")
-
-	if err != nil {
-		return err
-	}
-
-	err = executeExternalProgram("minikube", "stop")
 
 	if err != nil {
 		return err
@@ -76,9 +62,11 @@ func removeMinikube() error {
 		return err
 	}
 
-	return os.RemoveAll("./.minikube")
-}
+	err = os.RemoveAll("./.minikube")
 
-func convertToBase64(data string) string {
-	return b64.StdEncoding.EncodeToString([]byte(data))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -31,7 +31,7 @@ var resetCmd = &cobra.Command{
 		recreate, _ := cmd.Flags().GetBool("recreate")
 
 		if recreate {
-			cobra.CheckErr(vagrantDestroy(strings.Join(args, " "), true))
+			cobra.CheckErr(vagrantDestroy())
 			cobra.CheckErr(vagrantUp(strings.Join(args, " "), true))
 			cobra.CheckErr(executeExternalProgram("ansible-playbook", "playbooks/init.yml"))
 		} else {
