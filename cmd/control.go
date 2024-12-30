@@ -23,8 +23,8 @@ import (
 
 var controlCmd = &cobra.Command{
 	Use:                "control",
-	Short:              "Control the Kubernetes development vagrant environment",
-	Long:               "Control the Kubernetes development vagrant environment",
+	Short:              "Control the Kubernetes development environment",
+	Long:               "Control the Kubernetes development environment",
 	Aliases:            []string{"kubectl", "ctl"},
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {

@@ -23,8 +23,8 @@ import (
 
 var helmCmd = &cobra.Command{
 	Use:   "helm",
-	Short: "Use helm in the Kubernetes development vagrant environment",
-	Long:  "Use helm in the Kubernetes development vagrant environment",
+	Short: "Use helm in the Kubernetes development environment",
+	Long:  "Use helm in the Kubernetes development environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		params := append(args, "--kubeconfig=./.kubectl.cfg", "--kube-context=default")
 
