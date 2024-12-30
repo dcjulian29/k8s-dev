@@ -19,15 +19,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var octantCmd = &cobra.Command{
-	Use:                "octant",
-	Short:              "Open Octant pointing to local kubectl file",
-	Long:               "Open Octant pointing to local kubectl file",
+var dashboardCmd = &cobra.Command{
+	Use:                "dashboard",
+	Short:              "Open the Kubernetes development environment dashboard",
+	Long:               "Open the Kubernetes development environment dashboard",
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := executeExternalProgram("octant", "--kubeconfig=./.kubectl.cfg")
+		if isMinikubeEnv() {
+			env := []string{
+				"KUBECONFIG=./.kubectl.cfg",
+			}
 
-		cobra.CheckErr(err)
+			cobra.CheckErr(executeExternalProgramEnv("minikube", env, "dashboard"))
+		}
+
+		if isVagrantEnv() {
+			cobra.CheckErr(executeExternalProgram("dashboard", "--kubeconfig=./.kubectl.cfg"))
+		}
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
@@ -36,5 +44,5 @@ var octantCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(octantCmd)
+	rootCmd.AddCommand(dashboardCmd)
 }
