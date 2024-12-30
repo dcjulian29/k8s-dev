@@ -60,6 +60,7 @@ var createCmd = &cobra.Command{
 			}
 
 			cobra.CheckErr(runMinikube(param...))
+			cobra.CheckErr(runMinikube("addons", "enable", "metrics-server"))
 
 			configureMinikubeKubectl()
 		} else {
