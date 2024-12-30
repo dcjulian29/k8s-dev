@@ -38,25 +38,10 @@ var deployCmd = &cobra.Command{
 			cobra.CheckErr(executeExternalProgram("ansible-playbook", "playbooks/init.yml"))
 		}
 
-		nodes, _ := cmd.Flags().GetBool("nodes")
 		pods, _ := cmd.Flags().GetBool("pods")
 
-		if nodes {
-			output, err := executeCommand("kubectl", "--kubeconfig=./.kubectl.cfg", "get", "nodes")
-
-			cobra.CheckErr(err)
-
-			printSubMessage("Environment Nodes")
-			fmt.Println(output)
-		}
-
 		if pods {
-			output, err := executeCommand("kubectl", "--kubeconfig=./.kubectl.cfg", "get", "pods", "--all-namespaces")
-
-			cobra.CheckErr(err)
-
-			printSubMessage("Environment Pods")
-			fmt.Println(output)
+			podsCmd.Run(cmd, args)
 		}
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
@@ -84,7 +69,6 @@ var deployCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(deployCmd)
 
-	deployCmd.Flags().BoolP("nodes", "n", true, "Show nodes of deployed environment")
 	deployCmd.Flags().BoolP("pods", "p", false, "Show pods of deployed environment")
 	deployCmd.Flags().BoolP("force", "f", false, "force redeployment of environment")
 }

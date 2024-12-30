@@ -73,6 +73,12 @@ var createCmd = &cobra.Command{
 		if deploy {
 			deployCmd.Run(cmd, args)
 		}
+
+		nodes, _ := cmd.Flags().GetBool("nodes")
+
+		if nodes {
+			nodesCmd.Run(cmd, args)
+		}
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
@@ -161,8 +167,9 @@ func init() {
 	createCmd.Flags().IntP("total-nodes", "t", 0, "number of total nodes to create ('0' indicates auto)")
 	createCmd.Flags().Bool("ha", false, "create highly available multi-control plane")
 
+	createCmd.Flags().BoolP("nodes", "n", true, "Show nodes of development environment")
 	createCmd.Flags().BoolP("deploy", "d", false, "deploy the Kubernetes cluster")
-	createCmd.Flags().BoolP("force", "f", false, "force recreation of the Kubernetes cluster")
+	createCmd.Flags().BoolP("force", "f", false, "force recreation of the Kubernetes environment")
 }
 
 func configureMinikubeKubectl() {
