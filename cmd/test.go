@@ -16,6 +16,7 @@ limitations under the License.
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -25,8 +26,8 @@ import (
 var testCmd = &cobra.Command{
 	Use:   "test <role>",
 	Args:  cobra.ExactArgs(1),
-	Short: "Test a role against Kubernetes development vagrant environment",
-	Long:  "Test a role against Kubernetes development vagrant environment",
+	Short: "Test a role against Kubernetes development environment",
+	Long:  "Test a role against Kubernetes development environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		name := args[0]
 		step, _ := cmd.Flags().GetBool("step")
@@ -48,7 +49,7 @@ var testCmd = &cobra.Command{
 
 		defer file.Close()
 
-		content := "---\n- hosts: 127.0.0.1\n  gather_facts: false\n\n  vars:\n    k8s_config: ../.kubectl.cfg\n    k8s_context: default\n\n  roles:\n"
+		content := "---\n- hosts: 127.0.0.1\n  gather_facts: false\n\n  vars:\n    k8s_config: ../.kubectl.cfg\n\n  roles:\n"
 		content = fmt.Sprintf("%s%s", content, fmt.Sprintf("    - role: %s\n", name))
 
 		if _, err = file.WriteString(content); err != nil {
@@ -68,10 +69,20 @@ var testCmd = &cobra.Command{
 		param = append(param, ".tmp/play.yml")
 
 		cobra.CheckErr(executeExternalProgram("ansible-playbook", param...))
+
+		cobra.CheckErr(os.RemoveAll(".tmp"))
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
-		cobra.CheckErr(ensureVagrantfile())
+
+		if !isVagrantEnv() && !isMinikubeEnv() {
+			cobra.CheckErr(errors.New("a Kubernetes development environment not found"))
+		}
+
+		if isVagrantEnv() {
+			cobra.CheckErr(ensureVagrantfile())
+		}
+
 		cobra.CheckErr(ensureKubectlfile())
 	},
 }
