@@ -16,6 +16,7 @@ limitations under the License.
 package cmd
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -38,7 +39,17 @@ var virtualCmd = &cobra.Command{
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
-		cobra.CheckErr(ensureVagrantfile())
+
+		if isMinikubeEnv() {
+			cobra.CheckErr(errors.New("'virtual' is only available for a vagrant environment"))
+		}
+
+		if !isVagrantEnv() {
+			cobra.CheckErr(errors.New("the vagrant environment does not exist"))
+		} else {
+			cobra.CheckErr(ensureVagrantfile())
+		}
+
 		cobra.CheckErr(ensureKubectlfile())
 	},
 }
