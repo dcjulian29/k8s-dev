@@ -16,39 +16,41 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/spf13/cobra"
 )
 
 var statusCmd = &cobra.Command{
 	Use:   "status",
-	Short: "Output machine status of the Kubernetes development environment",
-	Long:  "Output machine status of the Kubernetes development environment",
+	Short: "Output status of the Kubernetes development environment",
+	Long:  "Output status of the Kubernetes development environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		cobra.CheckErr(executeExternalProgram("vagrant", "status"))
+		if isMinikubeEnv() {
+			cobra.CheckErr(runMinikube("status"))
+		}
+
+		if isVagrantEnv() {
+			cobra.CheckErr(executeExternalProgram("vagrant", "status"))
+		}
 
 		err := ensureKubectlfile()
 
 		if err == nil {
-			output, err := executeCommand("kubectl", "--kubeconfig=./.kubectl.cfg", "get", "nodes")
-
-			cobra.CheckErr(err)
-
-			printSubMessage("Cluster Nodes")
-			fmt.Println(output)
-
-			output, err = executeCommand("kubectl", "--kubeconfig=.kubectl.cfg", "get", "pods", "--all-namespaces")
-
-			cobra.CheckErr(err)
-
-			printSubMessage("Cluster Pods")
-			fmt.Println(output)
+			nodesCmd.Run(cmd, args)
+			podsCmd.Run(cmd, args)
 		}
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
-		cobra.CheckErr(ensureVagrantfile())
+
+		if !isVagrantEnv() && !isMinikubeEnv() {
+			cobra.CheckErr(errors.New("a Kubernetes development environment not found"))
+		}
+
+		if isVagrantEnv() {
+			cobra.CheckErr(ensureVagrantfile())
+		}
 	},
 }
 
