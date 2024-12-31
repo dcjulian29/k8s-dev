@@ -16,8 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
-	"strings"
+	"errors"
 
 	"github.com/spf13/cobra"
 )
@@ -32,44 +31,48 @@ var resetCmd = &cobra.Command{
 
 		if recreate {
 			cobra.CheckErr(vagrantDestroy())
-			cobra.CheckErr(vagrantUp(strings.Join(args, " "), true))
+
+			provision, _ := cmd.Flags().GetBool("provision")
+
+			cobra.CheckErr(vagrantUp("", provision))
+
 			cobra.CheckErr(executeExternalProgram("ansible-playbook", "playbooks/init.yml"))
 		} else {
 			cobra.CheckErr(executeExternalProgram("ansible-playbook", "playbooks/reset.yml"))
 		}
 
-		nodes, _ := cmd.Flags().GetBool("nodes")
-		pods, _ := cmd.Flags().GetBool("pods")
+		deploy, _ := cmd.Flags().GetBool("deploy")
 
-		if nodes {
-			output, err := executeCommand("kubectl", "--kubeconfig=./.kubectl.cfg", "get", "nodes")
-
-			cobra.CheckErr(err)
-
-			printSubMessage("Cluster Nodes")
-			fmt.Println(output)
+		if deploy {
+			deployCmd.Run(cmd, args)
 		}
 
-		if pods {
-			output, err := executeCommand("kubectl", "--kubeconfig=.kubectl.cfg", "get", "pods", "--all-namespaces")
+		nodes, _ := cmd.Flags().GetBool("nodes")
 
-			cobra.CheckErr(err)
-
-			printSubMessage("Cluster Pods")
-			fmt.Println(output)
+		if nodes {
+			nodesCmd.Run(cmd, args)
 		}
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
-		cobra.CheckErr(ensureVagrantfile())
-		cobra.CheckErr(ensureKubectlfile())
+
+		if isMinikubeEnv() {
+			cobra.CheckErr(errors.New("'reset' is only available for a vagrant environment"))
+		}
+
+		if !isVagrantEnv() {
+			cobra.CheckErr(errors.New("the vagrant environment does not exist"))
+		} else {
+			cobra.CheckErr(ensureVagrantfile())
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(resetCmd)
 
-	resetCmd.Flags().BoolP("nodes", "n", true, "Show nodes of deployed cluster")
-	resetCmd.Flags().BoolP("pods", "p", false, "Show pods of deployed cluster")
+	resetCmd.Flags().BoolP("provision", "p", true, "run the Vagrant provisioner")
 	resetCmd.Flags().Bool("recreate", false, "Recreate the vagrant hosts")
+	resetCmd.Flags().BoolP("nodes", "n", true, "Show nodes of development environment")
+	resetCmd.Flags().BoolP("deploy", "d", false, "deploy the Kubernetes cluster")
 }
