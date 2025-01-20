@@ -70,6 +70,7 @@ func minikubeDestroy() error {
 func runMinikube(command ...string) error {
 	env := []string{
 		"KUBECONFIG=./.kubectl.cfg",
+		"MINIKUBE_HOME=./.minikube",
 	}
 
 	return executeExternalProgramEnv("minikube", env, command...)
