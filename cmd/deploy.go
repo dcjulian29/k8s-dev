@@ -69,6 +69,6 @@ var deployCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(deployCmd)
 
-	deployCmd.Flags().BoolP("pods", "p", false, "Show pods of deployed environment")
-	deployCmd.Flags().BoolP("force", "f", false, "force redeployment of environment")
+	deployCmd.Flags().BoolP("pods", "p", false, "Show pods of the deployed environment")
+	deployCmd.Flags().BoolP("force", "f", false, "force redeployment of the environment")
 }
