@@ -35,9 +35,9 @@ var configCmd = &cobra.Command{
 
 		if k8s {
 			cobra.CheckErr(executeExternalProgramEnv("ansible-playbook", env, "playbooks/init.yml"))
+		} else {
+			cobra.CheckErr(executeExternalProgramEnv("ansible-playbook", env, "playbooks/config.yml"))
 		}
-
-		cobra.CheckErr(executeExternalProgramEnv("ansible-playbook", env, "playbooks/config.yml"))
 
 		pods, _ := cmd.Flags().GetBool("pods")
 
