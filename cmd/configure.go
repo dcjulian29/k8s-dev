@@ -31,6 +31,12 @@ var configCmd = &cobra.Command{
 			"K8S_AUTH_VERIFY_SSL=false",
 		}
 
+		k8s, _ := cmd.Flags().GetBool("k8s")
+
+		if k8s {
+			cobra.CheckErr(executeExternalProgramEnv("ansible-playbook", env, "playbooks/init.yml"))
+		}
+
 		cobra.CheckErr(executeExternalProgramEnv("ansible-playbook", env, "playbooks/config.yml"))
 
 		pods, _ := cmd.Flags().GetBool("pods")
@@ -42,10 +48,14 @@ var configCmd = &cobra.Command{
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
 
-		err := ensureKubectlfile()
+		k8s, _ := cmd.Flags().GetBool("k8s")
 
-		if err == nil {
-			cobra.CheckErr(fmt.Errorf("%s has not been created yet", "kubernetes"))
+		if !k8s {
+			err := ensureKubectlfile()
+
+			if err == nil {
+				cobra.CheckErr(fmt.Errorf("%s has not been created yet", "kubernetes"))
+			}
 		}
 	},
 }
@@ -54,4 +64,5 @@ func init() {
 	rootCmd.AddCommand(configCmd)
 
 	configCmd.Flags().BoolP("pods", "p", false, "Show pods of the configured environment")
+	configCmd.Flags().BoolP("k8s", "k", false, "Include k8s setup in the configured environment")
 }
