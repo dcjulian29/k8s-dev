@@ -53,8 +53,8 @@ var configCmd = &cobra.Command{
 		if !k8s {
 			err := ensureKubectlfile()
 
-			if err == nil {
-				cobra.CheckErr(fmt.Errorf("%s has not been created yet", "kubernetes"))
+			if err != nil {
+				cobra.CheckErr(fmt.Errorf("%s has not been created yet...\n%s", "kubernetes", err))
 			}
 		}
 	},
