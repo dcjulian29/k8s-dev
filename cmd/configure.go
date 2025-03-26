@@ -34,6 +34,12 @@ var configCmd = &cobra.Command{
 		k8s, _ := cmd.Flags().GetBool("k8s")
 
 		if k8s {
+			c, _ := cmd.Flags().GetString("pre-configure")
+
+			if len(c) > 0 {
+				cobra.CheckErr(executeExternalProgramEnv("ansible-playbook", env, fmt.Sprintf("playbooks/%s.yml", c)))
+			}
+
 			cobra.CheckErr(executeExternalProgramEnv("ansible-playbook", env, "playbooks/init.yml"))
 		} else {
 			cobra.CheckErr(executeExternalProgramEnv("ansible-playbook", env, "playbooks/config.yml"))
@@ -63,6 +69,7 @@ var configCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(configCmd)
 
+	configCmd.Flags().StringP("pre-config", "c", "", "Include a pre-configuration playbook")
+	configCmd.Flags().BoolP("k8s", "k", false, "Include k8s initialization before configuration")
 	configCmd.Flags().BoolP("pods", "p", false, "Show pods of the configured environment")
-	configCmd.Flags().BoolP("k8s", "k", false, "Include k8s setup in the configured environment")
 }
