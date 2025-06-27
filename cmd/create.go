@@ -83,10 +83,6 @@ var createCmd = &cobra.Command{
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ensureRootDirectory()
 
-		if !(isMinikubeEnv() || isVagrantEnv()) {
-			cobra.CheckErr(errors.New("kubernetes development environment does not exist"))
-		}
-
 		vagrant, _ := cmd.Flags().GetBool("vagrant")
 		minikube, _ := cmd.Flags().GetBool("minikube")
 		needForce := false

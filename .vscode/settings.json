@@ -8,6 +8,8 @@
     "goarch",
     "iface",
     "ioapic",
+    "kubeconfig",
+    "Kubectlfile",
     "ldflags",
     "lineinfile",
     "modifyvm",

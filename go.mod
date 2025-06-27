@@ -1,7 +1,8 @@
 module github.com/dcjulian29/k8s-dev
 
-go 1.21.4
-toolchain go1.24.1
+go 1.23.0
+
+toolchain go1.24.4
 
 require github.com/spf13/cobra v1.8.1
 
