@@ -4,7 +4,7 @@ go 1.24.0
 
 toolchain go1.24.4
 
-require github.com/spf13/cobra v1.10.1
+require github.com/spf13/cobra v1.10.2
 
 require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
