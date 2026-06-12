@@ -30,7 +30,7 @@ archives:
 nfpms:
   - package_name: dcjulian29.apps.k8s-dev
     homepage: https://github.com/dcjulian29/k8s-dev/
-    maintainer: Julian Easterling <julian@julianscorner.com>
+    maintainer: Julian Easterling
     license: Apache 2.0
     dependencies:
       - docker-ce
@@ -54,9 +54,9 @@ nfpms:
     bindir: /usr/local/bin
 chocolateys:
   - name: dcjulian29.apps.k8s-dev
-    authors: Julian Easterling <julian@julianscorner.com>
+    authors: Julian Easterling
     project_url: https://github.com/dcjulian29/k8s-dev/
-    copyright: 2023 Julian Easterling julian@julianscorner.com
+    copyright: 2026 Julian Easterling
     license_url: https://github.com/dcjulian29/k8s-dev/blob/main/LICENSE
     require_license_acceptance: false
     bug_tracker_url: https://github.com/dcjulian29/k8s-dev/issues
