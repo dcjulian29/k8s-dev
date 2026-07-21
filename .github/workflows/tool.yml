@@ -18,7 +18,7 @@ jobs:
 
       - run: git fetch --force --tags
 
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@v7
         with:
           cache-dependency-path: ${{ github.workspace }}/go.sum
           go-version-file: ${{ github.workspace }}/go.mod
@@ -42,7 +42,7 @@ jobs:
 
       - run: git fetch --force --tags
 
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@v7
         with:
           cache-dependency-path: ${{ github.workspace }}/go.sum
           go-version-file: ${{ github.workspace }}/go.mod
